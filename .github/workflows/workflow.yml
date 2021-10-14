@@ -2,8 +2,8 @@ env:
   RUBY_VERSION: 3.x
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: password
-  DATABASE_USER: ${{ env.POSTGRES_USER }}
-  DATABASE_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+  DATABASE_USER: postgres
+  DATABASE_PASSWORD: password
 
 name: Rails tests
 on:
