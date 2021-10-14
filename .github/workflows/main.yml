@@ -1,0 +1,53 @@
+env:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: w3l2ltpw3f
+  POSTGRES_DB: postgres
+
+name: Rails tests
+on: [push, pull_request]
+jobs:
+  rspec-test:
+    name: RSpec
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12
+        ports:
+        - 5432:5432
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+    container:
+      image: dmartinez05/ruby_rails_postgresql:latest
+      steps:
+        - name: Install dependencies
+          run: |
+            bundler install
+        - name: Create database
+          run: |
+            bundler exec rails db:create RAILS_ENV=test
+            bundler exec rails db:migrate RAILS_ENV=test
+        - name: Run tests
+          run: bundler exec rspec .
+        - name: Run brakeman
+          run: brakeman -o brakeman.txt
+        - name: Run rubocop
+          run: bundler exec rubocop --out rubocop.txt
+        - name: Upload coverage results
+          uses: actions/upload-artifact@master
+          if: always()
+          with:
+            name: coverage-report
+            path: coverage
+        - name: Upload rubocop report
+          uses: actions/upload-artifact@master
+          if: always()
+          with:
+            name: rubocop-report.txt
+            path: rubocop.txt
+        - name: Upload brakeman report
+          uses: actions/upload-artifact@master
+          if: always()
+          with:
+            name: brakeman-report.txt
+            path: brakeman.txt
