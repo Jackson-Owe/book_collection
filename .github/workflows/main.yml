@@ -2,6 +2,8 @@ env:
   RUBY_VERSION: 3.x
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: password
+  DATABASE_USER: ${{ env.POSTGRES_USER }}
+  DATABASE_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
 
 name: Rails tests
 on:
@@ -22,9 +24,6 @@ jobs:
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
     steps:
-      env:
-         DATABASE_USER: ${{ env.POSTGRES_USER }}
-         DATABASE_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
